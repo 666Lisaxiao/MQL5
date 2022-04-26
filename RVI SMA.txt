@@ -1,0 +1,87 @@
+//+------------------------------------------------------------------+
+//|                                                      RVI EMA.mq5 |
+//|                                   Copyright 2022, MetaQuotes Ltd |
+//|                                             https://www.mql5.com |
+//+------------------------------------------------------------------+
+#property copyright "Copyright 2022, MetaQuotes Ltd"
+#property link      "https://www.mql5.com"
+#property version   "1.00"
+#include <C:\Users\Chen\AppData\Roaming\MetaQuotes\Terminal\EE0304F13905552AE0B5EAEFB04866EB\MQL5\Include\交易類.mqh>
+#include <C:\Users\Chen\AppData\Roaming\MetaQuotes\Terminal\EE0304F13905552AE0B5EAEFB04866EB\MQL5\Include\數據類.mqh>
+B jy;
+A sj(Symbol(),PERIOD_M30);
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+  {
+//---
+
+//---
+   return(INIT_SUCCEEDED);
+  }
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+  {
+//---
+
+  }
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+  {
+//---
+   double na=SymbolInfoDouble(Symbol(),SYMBOL_ASK);         //na現買價
+   double nb=SymbolInfoDouble(Symbol(),SYMBOL_BID);         //nb現賣價
+   double tm=AccountInfoDouble(ACCOUNT_BALANCE);            //tm持有金額
+   double dd=tm/na;
+   dd=jy.formatalots(Symbol(),dd);
+   double kd=tm/nb;
+   kd=jy.formatalots(Symbol(),kd);
+
+   double rvi[];
+   double rvisig[];
+   sj.RVI(rvi,rvisig,3,10);
+   double rvi1=rvi[1];
+   double rvisig1=rvisig[1];
+   double rvi2=rvi[2];
+   double rvisig2=rvisig[2];
+
+   double ma50[];
+   sj.MA(ma50,1,50,0,MODE_SMA,PRICE_CLOSE);
+   double ma50_0=ma50[0];
+   double ma200[];
+   sj.MA(ma200,1,200,0,MODE_SMA,PRICE_CLOSE);
+   double ma200_0=ma200[0];
+  
+   if((jy.danshu(Symbol(),POSITION_TYPE_BUY)==0)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL)==0))//如果全部單數=0
+     {
+      if((ma50_0>ma200_0))
+        {
+         if((rvi2<0)&&(rvi1<0)&&(rvisig1<0)&&(rvisig2<0))
+           {
+            if((rvi2<rvisig2)&&(rvi1>rvisig1))
+              {
+               jy.safebuy(Symbol(),dd,na-0.01*na,na+0.015*na,1);
+               Sleep(30*1*60*1000);
+              }
+           }
+        }
+      if((ma50_0<ma200_0))
+        {
+         if((rvi2>0)&&(rvi1>0)&&(rvisig1>0)&&(rvisig2>0))
+           {
+            if((rvi2>rvisig2)&&(rvi1<rvisig1))
+              {
+               jy.safesell(Symbol(),kd,nb+0.01*nb,nb-0.015*nb,1);
+               Sleep(30*1*60*1000);
+              }
+           }
+        }
+     }
+
+  }
+//+------------------------------------------------------------------+

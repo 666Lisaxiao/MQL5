@@ -1,0 +1,470 @@
+//+------------------------------------------------------------------+
+//|                                                      ProjectName |
+//|                                      Copyright 2020, CompanyName |
+//|                                       http://www.companyname.net |
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+class A
+  {
+public:
+   string            symbol;
+   ENUM_TIMEFRAMES   tf;
+
+                     A(string symbol,ENUM_TIMEFRAMES tf)
+     {
+      this.symbol=symbol;
+      this.tf=tf;
+     }
+
+                    ~A()
+     {
+
+     }
+
+   double            getask(string symbol)
+     {
+      double a=SymbolInfoDouble(symbol,SYMBOL_ASK);
+      return(a);
+     }
+
+   double            getask()
+     {
+      double a=SymbolInfoDouble(symbol,SYMBOL_ASK);
+      return(a);
+     }
+
+   double            getbid(string symbol)
+     {
+      double a=SymbolInfoDouble(symbol,SYMBOL_BID);
+      return(a);
+     }
+
+   double            getbid()
+     {
+      double a=SymbolInfoDouble(symbol,SYMBOL_BID);
+      return(a);
+     }
+   int               getopen(double &open[],int count,string symbol,ENUM_TIMEFRAMES tf)
+     {
+      ArraySetAsSeries(open,true);
+      int a=CopyOpen(symbol,tf,0,count,open);
+      return(a);
+     }
+
+   int               getopen(double &open[],int count)
+     {
+      ArraySetAsSeries(open,true);
+      int a=CopyOpen(symbol,tf,0,count,open);
+      return(a);
+     }
+
+   int               getclose(double &close[],int count,string symbol,ENUM_TIMEFRAMES tf)
+     {
+      ArraySetAsSeries(close,true);
+      int a=CopyClose(symbol,tf,0,count,close);
+      return(a);
+     }
+
+   int               getclose(double &close[],int count)
+     {
+      ArraySetAsSeries(close,true);
+      int a=CopyClose(symbol,tf,0,count,close);
+      return(a);
+     }
+
+   int               gethigh(double &high[],int count,string symbol,ENUM_TIMEFRAMES tf)
+     {
+      ArraySetAsSeries(high,true);
+      int a=CopyHigh(symbol,tf,0,count,high);
+      return(a);
+     }
+
+   int               gethigh(double &high[],int count)
+     {
+      ArraySetAsSeries(high,true);
+      int a=CopyHigh(symbol,tf,0,count,high);
+      return(a);
+     }
+
+   int               getlow(double &low[],int count,string symbol,ENUM_TIMEFRAMES tf)
+     {
+      ArraySetAsSeries(low,true);
+      int a=CopyLow(symbol,tf,0,count,low);
+      return(a);
+     }
+
+   int               getlow(double &low[],int count)
+     {
+      ArraySetAsSeries(low,true);
+      int a=CopyLow(symbol,tf,0,count,low);
+      return(a);
+     }
+
+   int               gettime(
+      datetime         &time[],
+      int              count,
+      string           symbol,
+      ENUM_TIMEFRAMES  tf
+   )
+     {
+      ArraySetAsSeries(time,true);
+      return(CopyTime(symbol,tf,0,count,time));
+     }
+
+   int               gettime(
+      datetime         &time[],
+      int              count
+   )
+     {
+      ArraySetAsSeries(time,true);
+      return(CopyTime(symbol,tf,0,count,time));
+     }
+
+
+   void               MA(
+      double               &ma[],
+      int count,
+      string               symbol,            // 交易品种名?
+      ENUM_TIMEFRAMES      tf,                // 周期
+      int                  ma_period,         // 平均周期
+      int                  ma_shift,          // 平移
+      ENUM_MA_METHOD       ma_method,         // 平滑?型
+      ENUM_APPLIED_PRICE   applied_price      // 价格或者?理程序?型
+   )
+     {
+      double ma_h=iMA(symbol,tf,ma_period,ma_shift,ma_method,applied_price);
+      ArraySetAsSeries(ma,true);
+      CopyBuffer(ma_h,0,0,count,ma);
+      IndicatorRelease(ma_h);
+     }
+
+   void               MA(
+      double               &ma[],
+      int count,
+      int                  ma_period,         // 平均周期
+      int                  ma_shift,          // 平移
+      ENUM_MA_METHOD       ma_method,         // 平滑?型
+      ENUM_APPLIED_PRICE   applied_price      // 价格或者?理程序?型
+   )
+     {
+      double ma_h=iMA(symbol,tf,ma_period,ma_shift,ma_method,applied_price);
+      ArraySetAsSeries(ma,true);
+      CopyBuffer(ma_h,0,0,count,ma);
+      IndicatorRelease(ma_h);
+     }
+
+   void              ADX(
+      double            &adx[],
+      double            &pdi[],
+      double            &ndi[],
+      int count,
+      string           symbol,         // 交易品种名?
+      ENUM_TIMEFRAMES  tf,             // 周期
+      int              adx_period      // 平均周期
+   )
+     {
+      double adx_h=iADX(symbol,tf,adx_period);
+      ArraySetAsSeries(adx,true);
+      ArraySetAsSeries(pdi,true);
+      ArraySetAsSeries(ndi,true);
+      CopyBuffer(adx_h,0,0,count,adx);
+      CopyBuffer(adx_h,1,0,count,pdi);
+      CopyBuffer(adx_h,2,0,count,ndi);
+      IndicatorRelease(adx_h);
+     }
+
+   void              ADX(
+      double            &adx[],
+      double            &pdi[],
+      double            &ndi[],
+      int count,
+      int              adx_period      // 平均周期
+   )
+     {
+      double adx_h=iADX(symbol,tf,adx_period);
+      ArraySetAsSeries(adx,true);
+      ArraySetAsSeries(pdi,true);
+      ArraySetAsSeries(ndi,true);
+      CopyBuffer(adx_h,0,0,count,adx);
+      CopyBuffer(adx_h,1,0,count,pdi);
+      CopyBuffer(adx_h,2,0,count,ndi);
+      IndicatorRelease(adx_h);
+     }
+
+   void              Bands(
+      double              &up[],
+      double              &low[],
+      double              &mid[],
+      int                 count,
+      string              symbol,            // 交易品种名?
+      ENUM_TIMEFRAMES     tf,                // 周期
+      int                 bands_period,      // 平均??算周期
+      int                 bands_shift,       // 指?平移
+      double              deviation          // ?准差?
+   )
+     {
+      double boll_h=iBands(symbol,tf,bands_period,bands_shift,deviation,PRICE_CLOSE);
+      ArraySetAsSeries(up,true);
+      ArraySetAsSeries(low,true);
+      ArraySetAsSeries(mid,true);
+      CopyBuffer(boll_h,1,0,count,up);
+      CopyBuffer(boll_h,2,0,count,low);
+      CopyBuffer(boll_h,0,0,count,mid);
+      IndicatorRelease(boll_h);
+     }
+
+   void              Bands(
+      double              &up[],
+      double              &low[],
+      double              &mid[],
+      int                 count,
+      int                 bands_period,      // 平均??算周期
+      int                 bands_shift,       // 指?平移
+      double              deviation          // ?准差?
+   )
+     {
+      double boll_h=iBands(symbol,tf,bands_period,bands_shift,deviation,PRICE_CLOSE);
+      ArraySetAsSeries(up,true);
+      ArraySetAsSeries(low,true);
+      ArraySetAsSeries(mid,true);
+      CopyBuffer(boll_h,1,0,count,up);
+      CopyBuffer(boll_h,2,0,count,low);
+      CopyBuffer(boll_h,0,0,count,mid);
+      IndicatorRelease(boll_h);
+     }
+
+   void               MACD(
+      double              &macd[],
+      double              &sig[],
+      int                 count,
+      string              symbol,              // 交易品种名?
+      ENUM_TIMEFRAMES     tf,                  // 周期
+      int                 fast_ema_period,     // 快速移?平均?周期
+      int                 slow_ema_period,     // 慢速移?平均?周期
+      int                 signal_period        // 不同?的平均周期
+   )
+     {
+      double macd_h=iMACD(symbol,tf,fast_ema_period,slow_ema_period,signal_period,PRICE_CLOSE);
+      ArraySetAsSeries(macd,true);
+      ArraySetAsSeries(sig,true);
+      CopyBuffer(macd_h,0,0,count,macd);
+      CopyBuffer(macd_h,1,0,count,sig);
+      IndicatorRelease(macd_h);
+     }
+
+   void               MACD(
+      double              &macd[],
+      double              &sig[],
+      int                 count,
+      int                 fast_ema_period,     // 快速移?平均?周期
+      int                 slow_ema_period,     // 慢速移?平均?周期
+      int                 signal_period        // 不同?的平均周期
+   )
+     {
+      double macd_h=iMACD(symbol,tf,fast_ema_period,slow_ema_period,signal_period,PRICE_CLOSE);
+      ArraySetAsSeries(macd,true);
+      ArraySetAsSeries(sig,true);
+      CopyBuffer(macd_h,0,0,count,macd);
+      CopyBuffer(macd_h,1,0,count,sig);
+      IndicatorRelease(macd_h);
+     }
+
+   void              ATR(
+      double              &atr[],
+      int                 count,
+      string              symbol,        // 交易品种名?
+      ENUM_TIMEFRAMES     tf,            // 周期
+      int                 ma_period      // 平均周期
+   )
+     {
+      double atr_h=iATR(symbol,tf,ma_period);
+      ArraySetAsSeries(atr,true);
+      CopyBuffer(atr_h,0,0,count,atr);
+      IndicatorRelease(atr_h);
+     }
+
+   void              ATR(
+      double              &atr[],
+      int                 count,
+      int                 ma_period      // 平均周期
+   )
+     {
+      double atr_h=iATR(symbol,tf,ma_period);
+      ArraySetAsSeries(atr,true);
+      CopyBuffer(atr_h,0,0,count,atr);
+      IndicatorRelease(atr_h);
+     }
+
+   void              CCI(
+      double              &cci[],
+      int                 count,
+      string              symbol,            // 交易品种名?
+      ENUM_TIMEFRAMES     tf,                // 周期
+      int                 ma_period          // 平均周期
+   )
+     {
+      double cci_h=iCCI(symbol,tf,ma_period,PRICE_TYPICAL);
+      ArraySetAsSeries(cci,true);
+      CopyBuffer(cci_h,0,0,count,cci);
+      IndicatorRelease(cci_h);
+     }
+
+   void              CCI(
+      double              &cci[],
+      int                 count,
+      int                 ma_period         // 平均周期
+   )
+     {
+      double cci_h=iCCI(symbol,tf,ma_period,PRICE_TYPICAL);
+      ArraySetAsSeries(cci,true);
+      CopyBuffer(cci_h,0,0,count,cci);
+      IndicatorRelease(cci_h);
+     }
+
+   void               RSI(
+      double               &rsi[],
+      int                  count,
+      string               symbol,            // 交易品种名?
+      ENUM_TIMEFRAMES      tf,                // 周期
+      int                  ma_period          // 平均周期
+   )
+     {
+      double rsi_h=iRSI(symbol,tf,ma_period,PRICE_CLOSE);
+      ArraySetAsSeries(rsi,true);
+      CopyBuffer(rsi_h,0,0,count,rsi);
+      IndicatorRelease(rsi_h);
+     }
+
+   void               RSI(
+      double               &rsi[],
+      int                  count,
+      int                  ma_period          // 平均周期
+   )
+     {
+      double rsi_h=iRSI(symbol,tf,ma_period,PRICE_CLOSE);
+      ArraySetAsSeries(rsi,true);
+      CopyBuffer(rsi_h,0,0,count,rsi);
+      IndicatorRelease(rsi_h);
+     }
+
+   void               Alligator(
+      double               &jaw[],
+      double               &teeth[],
+      double               &lip[],
+      int                  count,
+      string               symbol,            
+      ENUM_TIMEFRAMES      tf,               
+      int                  jaw_period,       
+      int                  jaw_shift,        
+      int                  teeth_period,     
+      int                  teeth_shift,       
+      int                  lips_period,       
+      int                  lips_shift       
+   )
+     {
+      double all_h=iAlligator(symbol,tf,jaw_period=13,jaw_shift=8,teeth_period=8,teeth_shift=5,lips_period=5,lips_shift=3,MODE_SMMA,PRICE_MEDIAN);
+      ArraySetAsSeries(jaw,true);
+      ArraySetAsSeries(teeth,true);
+      ArraySetAsSeries(lip,true);
+      CopyBuffer(all_h,0,0,count,jaw);
+      CopyBuffer(all_h,1,0,count,teeth);
+      CopyBuffer(all_h,2,0,count,lip);
+      IndicatorRelease(all_h);
+     }
+
+   void               Alligator(
+      double               &jaw[],
+      double               &teeth[],
+      double               &lip[],
+      int                  count,
+      int                  jaw_period=13,        
+      int                  jaw_shift=8,        
+      int                  teeth_period=8,     
+      int                  teeth_shift=5,      
+      int                  lips_period=5,     
+      int                  lips_shift=3        
+   )
+     {
+      double all_h=iAlligator(symbol,tf,jaw_period,jaw_shift,teeth_period,teeth_shift,lips_period,lips_shift,MODE_SMMA,PRICE_MEDIAN);
+      ArraySetAsSeries(jaw,true);
+      ArraySetAsSeries(teeth,true);
+      ArraySetAsSeries(lip,true);
+      CopyBuffer(all_h,0,0,count,jaw);
+      CopyBuffer(all_h,1,0,count,teeth);
+      CopyBuffer(all_h,2,0,count,lip);
+      IndicatorRelease(all_h);
+     }
+
+   void               SAR(
+      double           &sar[],
+      int              count,
+      string           symbol,      // 交易品种名?
+      ENUM_TIMEFRAMES  tf          // 周期
+   )
+     {
+      double sar_h=iSAR(symbol,tf,0.02,0.2);
+      ArraySetAsSeries(sar,true);
+      CopyBuffer(sar_h,0,0,count,sar);
+      IndicatorRelease(sar_h);
+     }
+
+   void               SAR(
+      double           &sar[],
+      int              count
+   )
+     {
+      double sar_h=iSAR(symbol,tf,0.02,0.2);
+      ArraySetAsSeries(sar,true);
+      CopyBuffer(sar_h,0,0,count,sar);
+      IndicatorRelease(sar_h);
+     }
+
+   void               RVI(
+      double              &rvi[],
+      double              &sig[],
+      int                 count,
+      string              symbol,              // 交易品种名?
+      ENUM_TIMEFRAMES     tf,                  // 周期
+      int                 ma_period
+   )
+     {
+      double rvi_h=iRVI(symbol,tf,ma_period);
+      ArraySetAsSeries(rvi,true);
+      ArraySetAsSeries(sig,true);
+      CopyBuffer(rvi_h,0,0,count,rvi);
+      CopyBuffer(rvi_h,1,0,count,sig);
+      IndicatorRelease(rvi_h);
+     }
+
+   void               RVI(
+      double              &rvi[],
+      double              &sig[],
+      int                 count,
+      int                 ma_period
+   )
+     {
+      double rvi_h=iRVI(symbol,tf,ma_period);
+      ArraySetAsSeries(rvi,true);
+      ArraySetAsSeries(sig,true);
+      CopyBuffer(rvi_h,0,0,count,rvi);
+      CopyBuffer(rvi_h,1,0,count,sig);
+      IndicatorRelease(rvi_h);
+     }
+
+   void               ST(
+      double              &st[],
+      int                 count,
+      int                 period,
+      int                 mutiplier
+   )
+     {
+      double st_h=iCustom(symbol,tf,"Example/SuperTrend",period,mutiplier,false);
+      ArraySetAsSeries(st,true);
+      CopyBuffer(st_h,2,0,count,st);
+      IndicatorRelease(st_h);
+     }
+  };
+//+------------------------------------------------------------------+

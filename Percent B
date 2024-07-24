@@ -1,0 +1,132 @@
+//+------------------------------------------------------------------+
+//|                                                           %B.mq5 |
+//|                                  Copyright 2022, MetaQuotes Ltd. |
+//|                                             https://www.mql5.com |
+//+------------------------------------------------------------------+
+#property copyright "Copyright 2022, MetaQuotes Ltd."
+#property link      "https://www.mql5.com"
+#property version   "1.00"
+#include <C:\Users\Chen\AppData\Roaming\MetaQuotes\Terminal\BB16F565FAAA6B23A20C26C49416FF05\MQL5\交易類.mqh>
+#include <C:\Users\Chen\AppData\Roaming\MetaQuotes\Terminal\BB16F565FAAA6B23A20C26C49416FF05\MQL5\數據類.mqh>
+B jy;
+A sj(Symbol(),PERIOD_D1);
+input double 每單幾手=1;
+input double 第1次加注幾手=2;
+input double 上限=0.7;
+input double 下限=0.3;
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+  {
+//---
+
+//---
+   return(INIT_SUCCEEDED);
+  }
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+  {
+//---
+
+  }
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+  {
+//---
+   double na=SymbolInfoDouble(Symbol(),SYMBOL_ASK);         //na現買價
+   double nb=SymbolInfoDouble(Symbol(),SYMBOL_BID);         //nb現賣價
+
+   double ma200[];
+   sj.MA(ma200,1,200,0,MODE_SMA,PRICE_CLOSE);
+   double ma200_0=ma200[0];
+
+   double              up[];
+   double              low[];
+   double              mid[];
+   sj.Bands(up,low,mid,4,5,0,2);
+   double up_1=up[1];
+   double up_2=up[2];
+   double up_3=up[3];
+   double low_1=low[1];
+   double low_2=low[2];
+   double low_3=low[3];
+
+   double open[];
+   sj.getopen(open,1);
+   double open_0=open[0];
+
+   double close[];
+   sj.getclose(close,4);
+   double close_1=close[1];
+   double close_2=close[2];
+   double close_3=close[3];
+
+   double perB_1=(close_1-low_1)/(up_1-low_1);
+   double perB_2=(close_2-low_2)/(up_2-low_2);
+   double perB_3=(close_3-low_3)/(up_3-low_3);
+
+   if((jy.danshu(Symbol(),POSITION_TYPE_BUY,6)==0)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,6)==0))//如果交易品種全部單數=0
+     {
+      if((open_0>ma200_0)&&(na>ma200_0)&&(perB_3<下限)&&(perB_2<下限)&&(perB_1<下限))
+        {
+         jy.safebuy(Symbol(),每單幾手,0,0,6);
+        }
+     }
+//第1次
+   if((jy.danshu(Symbol(),POSITION_TYPE_BUY,6)==1)&&(jy.danshu(Symbol(),POSITION_TYPE_BUY,7)==0)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,6)==0))
+     {
+      if((perB_2>下限)&&(perB_1<下限))
+        {
+         jy.safebuy(Symbol(),第1次加注幾手,0,0,7);
+        }
+      if(perB_1>上限)
+        {
+         jy.closebuy(Symbol(),6);
+        }
+     }
+//第2次
+   if((jy.danshu(Symbol(),POSITION_TYPE_BUY,6)==1)&&(jy.danshu(Symbol(),POSITION_TYPE_BUY,7)==1)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,6)==0))
+     {
+      if(perB_1>上限)
+        {
+         jy.closebuy(Symbol(),6);
+         jy.closebuy(Symbol(),7);
+        }
+     }
+
+   if((jy.danshu(Symbol(),POSITION_TYPE_BUY,6)==0)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,6)==0))//如果交易品種全部單數=0
+     {
+      if((open_0<ma200_0)&&(nb<ma200_0)&&(perB_3>上限)&&(perB_2>上限)&&(perB_1>上限))
+        {
+         jy.safesell(Symbol(),每單幾手,0,0,6);
+        }
+     }
+//第1次
+   if((jy.danshu(Symbol(),POSITION_TYPE_BUY,6)==0)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,6)==1)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,7)==0))
+     {
+      if((perB_2<上限)&&(perB_1>上限))
+        {
+         jy.safesell(Symbol(),第1次加注幾手,0,0,7);
+        }
+      if(perB_1<下限)
+        {
+         jy.closesell(Symbol(),6);
+        }
+     }//第2次
+   if((jy.danshu(Symbol(),POSITION_TYPE_BUY,6)==0)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,6)==1)&&(jy.danshu(Symbol(),POSITION_TYPE_SELL,7)==1))
+     {
+      if(perB_1<下限)
+        {
+         jy.closesell(Symbol(),6);
+         jy.closesell(Symbol(),7);
+        }
+     }
+  }
+
+
+//+------------------------------------------------------------------+
